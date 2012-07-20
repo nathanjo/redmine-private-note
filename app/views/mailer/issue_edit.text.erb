@@ -1,0 +1,28 @@
+<%= l(:text_issue_updated, :id => "##{@issue.id}", :author => @journal.user) %>
+
+<% details_to_strings(@journal.details, true).each do |string| -%>
+<%= string %>
+<% end -%>
+
+<% privatenote = PrivateNote.find_all_by_journal_id(@journal.id) %>
+<% is_private = true %>
+<% p_notes = '' %>
+<% for pn in privatenote %>
+    <% p_notes = pn.notes %>
+<% end %>
+<%
+  if privatenote.nil? || privatenote.blank?
+   is_private = false
+  end 
+%>
+
+<% if is_private && p_notes.blank? %>
+    "This message is private. To view private message, open the ticket in Redmine. Only with permission can view the message."
+<% else %>
+    <%= @journal.notes if @journal.notes? %>
+    <% if !p_notes.blank? %>
+      "<p>This message contains private notes. To view private notes, open the ticket in Redmine. Only with permission can view the message.</p>"
+    <% end %>
+<% end %>
+----------------------------------------
+<%= render :partial => "issue.text.erb", :locals => { :issue => @issue, :issue_url => @issue_url } %>

@@ -1,0 +1,19 @@
+<% content_for :header_tags do %>
+    <%= javascript_include_tag 'script.js', :plugin => 'redmine_private_note' %>
+    <%= stylesheet_link_tag 'style.css', :plugin => 'redmine_private_note' %>
+<% end %>
+
+<%= check_box_tag("journal_is_private", '', false, :onclick => "show_pn(this);") %>
+<%= label_tag "journal_is_private", "Make Notes Private" %>
+
+<p>
+<strong>Add private notes</strong>
+<i>(Only if the above notes is for public.)</i>
+<%= link_to(image_tag('/images/edit.png', :alt => 'Add Private Note'), "#", :onclick => "Effect.Appear('textarea_private_notes'); return false;") %>
+</p>
+<p id="add_private_notes">
+  <span id="textarea_private_notes" style="display: none;">
+  <%= text_area_tag('private_note[notes]', '', :size => "50x10") %>
+  </span>
+</p>
+<%= hidden_field_tag 'private_note[issue_id]', @issue.id %>

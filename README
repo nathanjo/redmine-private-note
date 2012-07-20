@@ -1,0 +1,10 @@
+= redmine_private_note
+
+Ability to set journal as private. 
+Add a private note when updating a journal.
+
+---------
+
+Credits:
+Author: Jonathan Himbing (http://prometsource.com/people/jonathan-himbing)
+Sponsored by: Promet Source (http://prometsource.com)

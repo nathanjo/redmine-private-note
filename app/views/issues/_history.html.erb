@@ -1,0 +1,60 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'style.css', :plugin => 'redmine_private_note' %>
+<% end %>
+
+<% reply_links = authorize_for('issues', 'edit') -%>
+<% for journal in journals %>
+  <% privatenote = PrivateNote.find_all_by_journal_id(journal.id) %>
+  <% is_private = true %>
+  <% p_notes = '' %>
+  <% for pn in privatenote %>
+      <% p_notes = pn.notes %>
+  <% end %>
+  <%
+    if privatenote.nil? || privatenote.blank?
+     is_private = false
+    end 
+  %>
+  <div id="change-<%= journal.id %>" class="<%= journal.css_classes %>">
+    <h4><%= link_to "##{journal.indice}", {:anchor => "note-#{journal.indice}"}, :class => "journal-link" %>
+    <%= avatar(journal.user, :size => "24") %>
+    <%= 
+      if is_private && p_notes.blank?
+        '<span class="private">Private</span>'
+      end
+     %>
+    <%= content_tag('a', '', :name => "note-#{journal.indice}")%>
+    <%= authoring journal.created_on, journal.user, :label => :label_updated_time_by %>
+    </h4>
+    <% if is_private && p_notes.empty? %>
+      <% if User.current.allowed_to?(:view_private_note, issue.project) %>
+        <% if journal.details.any? %>
+            <ul class="details">
+              <% details_to_strings(journal.details).each do |string| %>
+               <li><%= string %></li>
+              <% end %>
+            </ul>
+          <% end %>
+          <%= render_notes(issue, journal, :reply_links => reply_links) unless journal.notes.blank? %>
+      <% end %>
+    <% else %>
+      <% if journal.details.any? %>
+      <ul class="details">
+        <% details_to_strings(journal.details).each do |string| %>
+         <li><%= string %></li>
+        <% end %>
+      </ul>
+      <% end %>
+      <%= render_notes(issue, journal, :reply_links => reply_links) unless journal.notes.blank? %>
+      <% if User.current.allowed_to?(:view_private_note, issue.project) %>
+        <% if !p_notes.blank? %>
+            <span class="private">Private</span>
+            <%= p_notes %>
+        <% end %>
+      <% end %>
+    <% end %>
+    
+  </div>
+<% end %>
+
+<% heads_for_wiki_formatter if User.current.allowed_to?(:edit_issue_notes, issue.project) || User.current.allowed_to?(:edit_own_issue_notes, issue.project) %>
